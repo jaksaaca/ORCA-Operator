@@ -4,15 +4,14 @@
 const views = {
   schedule: {
     title: "SCHEDULE DISTRIBUTION",
-    sub: "",
+    sub: "Automated Live Mapping Engine v2.0",
   },
   datasync: {
     title: "DATA SYNC ENGINE",
-    sub: "",
+    sub: "Metrics Extraction & Reconciliation v1.0",
   },
 };
 
-// Mobile Sidebar Controls
 const sidebar = document.getElementById("sidebar");
 const backdrop = document.getElementById("sidebarBackdrop");
 const mobileMenuBtn = document.getElementById("mobileMenuBtn");
@@ -27,10 +26,8 @@ mobileMenuBtn.addEventListener("click", toggleSidebar);
 closeSidebarBtn.addEventListener("click", toggleSidebar);
 backdrop.addEventListener("click", toggleSidebar);
 
-// Tab Switcher
 document.querySelectorAll(".menu-item").forEach((btn) => {
   btn.addEventListener("click", function () {
-    // Handle Active states
     document
       .querySelectorAll(".menu-item")
       .forEach((b) => b.classList.remove("active"));
@@ -42,11 +39,9 @@ document.querySelectorAll(".menu-item").forEach((btn) => {
     const target = this.getAttribute("data-target");
     document.getElementById("view-" + target).classList.remove("hidden");
 
-    // Update Headers
     document.getElementById("headerTitle").innerText = views[target].title;
     document.getElementById("headerSubtitle").innerText = views[target].sub;
 
-    // Auto-close sidebar on mobile after clicking a menu item
     if (window.innerWidth < 1024) {
       toggleSidebar();
     }
@@ -112,7 +107,10 @@ async function parseAndSortExcel(file) {
       };
       const lsTime = getVal("LS Time");
       if (!lsTime) return;
+
       schedules.push({
+        Date: getVal("Date"),
+        Day: getVal("Day"),
         "LS Time": lsTime,
         Duration: getVal("Duration") || "2h 0m",
         Brand: getVal("Brand"),
@@ -158,6 +156,48 @@ function renderSchedPreview(data) {
   document.getElementById("schedWrapper").classList.remove("hidden");
 }
 
+function formatIndoDate(dateStr, dayStr) {
+  const daysMap = {
+    sunday: "MINGGU",
+    monday: "SENIN",
+    tuesday: "SELASA",
+    wednesday: "RABU",
+    thursday: "KAMIS",
+    friday: "JUMAT",
+    saturday: "SABTU",
+  };
+  const monthsMap = [
+    "JANUARI",
+    "FEBRUARI",
+    "MARET",
+    "APRIL",
+    "MEI",
+    "JUNI",
+    "JULI",
+    "AGUSTUS",
+    "SEPTEMBER",
+    "OKTOBER",
+    "NOVEMBER",
+    "DESEMBER",
+  ];
+
+  let d = new Date(dateStr);
+  if (isNaN(d.getTime())) d = new Date();
+
+  let dayName = dayStr
+    ? daysMap[String(dayStr).toLowerCase()] || String(dayStr).toUpperCase()
+    : "";
+  if (!dayName)
+    dayName =
+      daysMap[d.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase()];
+
+  const dateNum = d.getDate();
+  const monthName = monthsMap[d.getMonth()];
+  const year = d.getFullYear();
+
+  return `${dayName}, ${dateNum} ${monthName} ${year}`;
+}
+
 document
   .getElementById("schedDownloadBtn")
   .addEventListener("click", async () => {
@@ -166,55 +206,91 @@ document
 
 async function triggerSchedDownload() {
   const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet("Live Schedule Mapping");
+  const ws = wb.addWorksheet("Live Schedule");
+
   ws.columns = [
-    { header: "LS Time", key: "lsTime", width: 16 },
-    { header: "Duration", key: "dur", width: 13 },
-    { header: "Brand", key: "brand", width: 32 },
-    { header: "Platform", key: "plat", width: 22 },
-    { header: "Host", key: "host", width: 18 },
-    { header: "Studio", key: "studio", width: 18 },
+    { key: "lsTime", width: 16 },
+    { key: "dur", width: 13 },
+    { key: "brand", width: 32 },
+    { key: "plat", width: 22 },
+    { key: "host", width: 18 },
+    { key: "studio", width: 18 },
   ];
 
-  ws.getRow(1).eachCell((c) => {
+  // 1. BARIS TANGGAL UTAMA (Paling Atas - Center, Ukuran sama dengan isi, Tanpa Border)
+  const firstRowData = schedData[0] || {};
+  const titleText = formatIndoDate(firstRowData["Date"], firstRowData["Day"]);
+
+  const titleRow = ws.addRow([titleText]);
+  ws.mergeCells("A1:F1");
+  titleRow.height = 24; // Tinggi baris disamakan
+
+  // Ukuran font dibuat 10 agar sama dengan isi tabel, alignment Center
+  titleRow.getCell(1).font = {
+    name: "Arial",
+    size: 10,
+    bold: true,
+    color: { argb: "FF000000" },
+  };
+  titleRow.getCell(1).alignment = { horizontal: "center", vertical: "middle" };
+
+  // 2. HEADER TABEL (Oranye)
+  const headerRow = ws.addRow([
+    "LS Time",
+    "Duration",
+    "Brand",
+    "Platform",
+    "Host",
+    "Studio",
+  ]);
+  headerRow.height = 24;
+  headerRow.eachCell((c) => {
     c.fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: "FFFFA500" },
     };
-    c.font = { bold: true };
-    c.alignment = { horizontal: "center" };
+    c.font = {
+      name: "Arial",
+      size: 10,
+      bold: true,
+      color: { argb: "FF000000" },
+    };
+    c.alignment = { horizontal: "center", vertical: "middle" };
     c.border = {
-      top: { style: "thin" },
-      left: { style: "thin" },
-      bottom: { style: "thin" },
-      right: { style: "thin" },
+      top: { style: "thin", color: { argb: "FF000000" } },
+      left: { style: "thin", color: { argb: "FF000000" } },
+      bottom: { style: "thin", color: { argb: "FF000000" } },
+      right: { style: "thin", color: { argb: "FF000000" } },
     };
   });
 
+  // 3. DATA JADWAL
   schedData.forEach((r) => {
-    const row = ws.addRow({
-      lsTime: r["LS Time"],
-      dur: r["Duration"],
-      brand: r["Brand"],
-      plat: r["Platform"],
-      host: r["Host"],
-      studio: r["Studio"],
-    });
+    const row = ws.addRow([
+      r["LS Time"],
+      r["Duration"],
+      r["Brand"],
+      r["Platform"],
+      r["Host"],
+      r["Studio"],
+    ]);
+    row.height = 20;
     row.eachCell((c, i) => {
       c.fill = {
         type: "pattern",
         pattern: "solid",
         fgColor: { argb: r._color.excel },
       };
+      c.font = { name: "Arial", size: 10, color: { argb: "FF000000" } };
       c.alignment = { horizontal: "center", vertical: "middle" };
       c.border = {
-        top: { style: "thin" },
-        left: { style: "thin" },
-        bottom: { style: "thin" },
-        right: { style: "thin" },
+        top: { style: "thin", color: { argb: "FF777777" } },
+        left: { style: "thin", color: { argb: "FF777777" } },
+        bottom: { style: "thin", color: { argb: "FF777777" } },
+        right: { style: "thin", color: { argb: "FF777777" } },
       };
-      if (i === 1) c.font = { bold: true };
+      if (i === 1) c.font.bold = true;
     });
   });
 
@@ -301,7 +377,6 @@ document.getElementById("syncInput").addEventListener("change", function (e) {
   e.target.value = "";
 });
 
-// Helper Sync
 const getV = (r, keys) => {
   for (let k in r) {
     let ck = k.replace(/\(.*?\)/g, "").trim();
