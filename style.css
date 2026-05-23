@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.glass-panel {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.upload-dashed {
+  border: 2px dashed rgba(59, 130, 246, 0.4);
+  transition: all 0.3s ease;
+}
+.upload-dashed:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.04);
+}
+
+/* Sidebar Menu Active State */
+.menu-item {
+  color: #94a3b8;
+  background: transparent;
+}
+.menu-item:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.03);
+}
+.menu-item.active {
+  color: #ffffff;
+  background: #1e293b;
+  border-left: 3px solid #3b82f6;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Custom Scrollbars (Horizontal & Vertical) */
+.custom-scrollbar::-webkit-scrollbar,
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
