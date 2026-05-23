@@ -4,11 +4,11 @@
 const views = {
   schedule: {
     title: "SCHEDULE DISTRIBUTION",
-    sub: "Automated Live Mapping Engine v2.0",
+    sub: " ",
   },
   datasync: {
     title: "DATA SYNC ENGINE",
-    sub: "Metrics Extraction & Reconciliation v1.0",
+    sub: " ",
   },
 };
 
