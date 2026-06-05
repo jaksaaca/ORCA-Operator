@@ -425,7 +425,7 @@ function processSyncData() {
   syncMappedData = syncRawData.map((row) => {
     const pClick = getV(row, ["product click"]);
     const views = getV(row, ["views", "view"]);
-    const co = getV(row, ["order paid for", "co"]);
+    const co = getV(row, ["order paid for", "attributed orders"]);
 
     const ctr = views > 0 ? ((pClick / views) * 100).toFixed(2) + "%" : "0.00%";
     const coRate =
