@@ -444,7 +444,7 @@ function processSyncData() {
       "Product Impression": getV(row, ["product impression"]),
       "Product Click": pClick,
       CTR: ctr,
-      Order: getV(row, ["item sold", "order"]),
+      Order: getV(row, ["item sold", "Attributed items sold"]),
       CO: co,
       "CO Rate": coRate,
       Buyer: getV(row, ["customer", "buyer"]),
