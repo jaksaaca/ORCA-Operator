@@ -454,8 +454,8 @@ function processSyncData() {
       "Followers Rate": "",
       "ERR (%)": "",
       "Live Impression": getV(row, ["live impression"]),
-      "Ads Cost": getV(row, ["ads cost"]),
-      "Ads GMV": getV(row, ["ads gmv"]),
+      "Ads Cost": clnCur(getV(row, ["ads cost"])),
+      "Ads GMV": clnCur(getV(row, ["ads gmv"])),
     };
   });
 
