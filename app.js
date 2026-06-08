@@ -424,8 +424,8 @@ const clnCur = (v) => {
 function processSyncData() {
   syncMappedData = syncRawData.map((row) => {
     const pClick = getV(row, ["product click"]);
-    const views = getV(row, ["views", "view"]);
-    const co = getV(row, ["order paid for", "attributed orders"]);
+    const views = getV(row, ["views"]);
+    const co = getV(row, ["attributed orders"]);
 
     const ctr = views > 0 ? ((pClick / views) * 100).toFixed(2) + "%" : "0.00%";
     const coRate =
@@ -434,34 +434,28 @@ function processSyncData() {
     return {
       Title: getT(row, ["livestream", "title", "judul"]),
       "Duration (s)": getV(row, ["duration"]),
-      "Start Time": getT(row, [
-        "start time",
-        "waktu mulai",
-        "live start",
-        "time",
-      ]),
-      GMV: clnCur(getV(row, ["attributed gmv", "direct gmv", "revenue"])),
-      "Product Impression": getV(row, ["product impression"]),
+      "Start Time": getT(row, ["start time", "waktu mulai"]),
+      "GMV Actual": clnCur(getV(row, ["attributed gmv"])),
+      "Product Impression": getV(row, ["product impressions"]),
       "Product Click": pClick,
       CTR: ctr,
-      Order: getV(row, ["item sold", "Attributed items sold"]),
+      Order: getV(row, ["attributed items sold"]),
       CO: co,
       "CO Rate": coRate,
-      Buyer: getV(row, ["customer", "buyer"]),
-      AOV: clnCur(getV(row, ["average price", "aov"])),
+      Buyer: getV(row, ["customer"]),
+      AOV: clnCur(getV(row, ["aov"])),
       Views: views,
       Viewers: "",
-      Comment: getV(row, ["comment", "comments"]),
-      Likes: getV(row, ["like", "likes"]),
-      Follow: getV(row, ["new follower", "new followers", "follow"]),
-      "Avg. View Duration (s)": getV(row, [
-        "avg. viewing duration per viewer",
-        "avg. view duration",
-      ]),
+      Comment: getV(row, ["comment"]),
+      Like: getV(row, ["like"]),
+      Follow: getV(row, ["new follower"]),
+      "Avg. View Duration (s)": getV(row, ["avg. viewing duration per viewer"]),
       "Engagement Rate": "",
       "Followers Rate": "",
       "ERR (%)": "",
-      "Live Impression": getV(row, ["live impression", "live impressions"]),
+      "Live Impression": getV(row, ["live impression"]),
+      "Ads Cost": getV(row, ["ads cost"]),
+      "Ads GMV": getV(row, ["ads gmv"]),
     };
   });
 
@@ -473,7 +467,7 @@ function processSyncData() {
             <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition">
                 <td class="p-2 md:p-2.5 border-r border-slate-800/50 truncate max-w-[150px]" title="${r["Title"]}">${r["Title"]}</td>
                 <td class="p-2 md:p-2.5 border-r border-slate-800/50">${r["Start Time"]}</td>
-                <td class="p-2 md:p-2.5 border-r border-slate-800/50 text-emerald-400 font-semibold">${r["GMV"]}</td>
+                <td class="p-2 md:p-2.5 border-r border-slate-800/50 text-emerald-400 font-semibold">${r["GMV Actual"]}</td>
                 <td class="p-2 md:p-2.5 border-r border-slate-800/50">${r["Product Click"]}</td>
                 <td class="p-2 md:p-2.5 border-r border-slate-800/50">${r["CTR"]}</td>
                 <td class="p-2 md:p-2.5 border-r border-slate-800/50">${r["Order"]}</td>
