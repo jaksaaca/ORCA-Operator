@@ -10,6 +10,10 @@ const views = {
     title: "DATA SYNC ENGINE",
     sub: " ",
   },
+  guide: {
+    title: "SYSTEM MONITORING HOST",
+    sub: " ",
+  },
 };
 
 const sidebar = document.getElementById("sidebar");

@@ -96,6 +96,23 @@
             </svg>
             Data Sync Engine
           </button>
+
+          <button
+            data-target="guide"
+            class="menu-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition"
+          >
+            <svg
+              class="w-4 h-4 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            System Monitoring Host
+          </button>
         </nav>
       </div>
       <div
@@ -160,15 +177,17 @@
         class="app-view p-4 md:p-6 space-y-4 md:space-y-6 flex-1"
       >
         <div
-          class="p-4 md:p-6 rounded-2xl bg-gradient-to-r from-blue-900/40 to-indigo-900/20 border border-blue-500/10 shadow-xl"
+          class="p-4 md:p-6 rounded-2xl bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-slate-900/20 border border-blue-500/20 shadow-xl"
         >
-          <h2 class="text-lg md:text-xl font-bold text-white mb-1">
-            Automated Schedule Formatting
-          </h2>
-          <p class="text-slate-400 text-xs md:text-sm">
-            Upload file Excel mentah jadwal live. Sistem otomatis mengurutkan
-            kronologis dan memetakan warna pas per sesi di berkas Excel.
-          </p>
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white mb-1 tracking-wide">
+              Automated Schedule Formatting
+            </h2>
+            <p class="text-slate-400 text-xs md:text-sm max-w-2xl">
+              Upload file Excel mentah jadwal live. Sistem otomatis mengurutkan
+              kronologis dan memetakan warna pas per sesi di berkas Excel.
+            </p>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -292,15 +311,17 @@
         class="app-view p-4 md:p-6 space-y-4 md:space-y-6 hidden flex-1"
       >
         <div
-          class="p-4 md:p-6 rounded-2xl bg-gradient-to-r from-emerald-900/40 to-teal-900/20 border border-emerald-500/10 shadow-xl"
+          class="p-4 md:p-6 rounded-2xl bg-gradient-to-r from-emerald-900/40 via-teal-900/30 to-slate-900/20 border border-emerald-500/20 shadow-xl"
         >
-          <h2 class="text-lg md:text-xl font-bold text-white mb-1">
-            Data Sync Engine
-          </h2>
-          <p class="text-slate-400 text-xs md:text-sm">
-            Upload file metrik (CSV/XLSX) untuk disesuaikan secara otomatis ke
-            dalam format standarisasi ORCA.
-          </p>
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white mb-1 tracking-wide">
+              Data Sync Engine
+            </h2>
+            <p class="text-slate-400 text-xs md:text-sm max-w-2xl">
+              Upload file metrik (CSV/XLSX) untuk disesuaikan secara otomatis ke
+              dalam format standarisasi ORCA.
+            </p>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -415,6 +436,132 @@
                 </thead>
                 <tbody id="syncTbody" class="text-slate-300"></tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="view-guide"
+        class="app-view p-4 md:p-6 space-y-4 md:space-y-6 hidden flex-1"
+      >
+        <div
+          class="p-4 md:p-6 rounded-2xl bg-gradient-to-r from-blue-900/40 via-purple-900/30 to-indigo-900/20 border border-blue-500/20 shadow-xl"
+        >
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-white mb-1 tracking-wide">
+              System Monitoring Host
+            </h2>
+            <p class="text-slate-400 text-xs md:text-sm max-w-2xl">
+              Selamat datang di pusat kendali operasional Live Shopping. Ikuti panduan terstruktur di bawah ini untuk memulai sesi dengan lancar dan aman.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+          <div class="glass-panel p-4 md:p-5 rounded-xl space-y-6 text-xs md:text-sm text-slate-300">
+            <!-- Langkah 1 & 2 -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-6 h-6 rounded-full bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold text-xs">1</div>
+                <h3 class="text-white font-bold text-sm tracking-wide">MENYALAKAN SISTEM</h3>
+              </div>
+              <ul class="space-y-3 ml-3 border-l-2 border-slate-800 pl-5">
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                  Pastikan PC Studio ini sudah terinstal <strong>Python</strong> (Sangat disarankan versi 3.11).
+                </li>
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                  Cari file bernama <span class="text-emerald-400 font-mono bg-emerald-400/10 border border-emerald-400/20 px-1.5 py-0.5 rounded text-[10px] md:text-xs">Start_ORBIZ.bat</span> di dalam folder instalasi.
+                </li>
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                  Klik ganda (Double-Click) file tersebut.
+                </li>
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+                  Sebuah jendela hitam (Command Prompt) akan muncul. <strong>JANGAN DITUTUP</strong> selama sesi berlangsung! Cukup Anda minimize (kecilkan) jendelanya.
+                </li>
+              </ul>
+            </div>
+
+            <div class="space-y-4 pt-2">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-6 h-6 rounded-full bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold text-xs">2</div>
+                <h3 class="text-white font-bold text-sm tracking-wide">MEMBUKA DASHBOARD</h3>
+              </div>
+              <div class="ml-3 border-l-2 border-slate-800 pl-5 space-y-4">
+                <p class="text-slate-400">Tekan tombol di bawah ini untuk langsung membuka tampilan Dashboard Utama Host:</p>
+                
+                <a
+                  href="http://localhost:5000"
+                  target="_blank"
+                  class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-500 font-bold text-white rounded-xl shadow-lg transition whitespace-nowrap"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  <span class="tracking-wide">BUKA DASHBOARD HOST</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-4 md:p-5 rounded-xl space-y-6 text-xs md:text-sm text-slate-300">
+            <!-- Langkah 3 & 4 -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-6 h-6 rounded-full bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold text-xs">3</div>
+                <h3 class="text-white font-bold text-sm tracking-wide">PENGATURAN SEBELUM MULAI</h3>
+              </div>
+              <ul class="space-y-3 ml-3 border-l-2 border-slate-800 pl-5">
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                  Di menu <strong>"Device Settings"</strong>, pilih Kamera sesuai dengan yang digunakan (Contoh: "OBS Virtual Camera").
+                </li>
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                  Pilih Mikrofon studio yang Anda gunakan.
+                </li>
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                  Isi <strong>"Session Setup"</strong> (Nama Brand, Studio ID, dan Nama Host) dengan data yang valid.
+                </li>
+              </ul>
+            </div>
+
+            <div class="space-y-4 pt-2">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-6 h-6 rounded-full bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold text-xs">4</div>
+                <h3 class="text-white font-bold text-sm tracking-wide">MULAI & BERHENTI</h3>
+              </div>
+              <ul class="space-y-3 ml-3 border-l-2 border-slate-800 pl-5">
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
+                  Jika Host sudah siap, klik tombol biru <strong>"Start Session"</strong>. Lampu tulisan <span class="text-red-500 font-bold">REC</span> merah di sudut video akan menyala, pertanda AI mulai bekerja.
+                </li>
+                <li class="relative">
+                  <div class="absolute -left-[25px] top-1.5 w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+                  Jika sesi sudah selesai, klik tombol merah <strong>"Stop & Save Data"</strong>.
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-6 p-4 bg-blue-900/10 border border-blue-500/20 rounded-xl">
+              <h3 class="text-blue-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Mengambil Data Laporan
+              </h3>
+              <p class="text-slate-400 mb-3">Seluruh riwayat sesi yang Anda "Stop" otomatis tersimpan aman. Untuk mengambil laporan (Excel/CSV):</p>
+              <ul class="space-y-2 text-slate-300">
+                <li class="flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  <span>Klik tombol <strong class="text-white">"Download Master Log"</strong> di layar Dashboard.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                  <span>Atau buka folder <span class="text-emerald-400 font-mono bg-emerald-400/10 border border-emerald-400/20 px-1.5 py-0.5 rounded text-[10px] md:text-xs mx-1">outputs</span> dan ambil file <span class="text-emerald-400 font-mono bg-emerald-400/10 border border-emerald-400/20 px-1.5 py-0.5 rounded text-[10px] md:text-xs ml-1">data_summary_host.csv</span>.</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
