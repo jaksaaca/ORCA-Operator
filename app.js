@@ -414,6 +414,30 @@ const getT = (r, keys) => {
   }
   return "-";
 };
+// Konversi nilai currency raw yang mengandung suffix singkatan, contoh:
+// "Rp588,7RB" -> 588700 (588,7 ribu)
+// "Rp1,7JT"   -> 1700000 (1,7 juta)
+// Berbeda dengan clnCur() yang HANYA membuang "Rp"/spasi/titik dan TIDAK
+// mengenali suffix RB/JT, sehingga "Rp588,7RB" salah terbaca jadi 588.7
+// (kurang 1000x) dan "Rp1,7JT" salah terbaca jadi 1.7 (kurang 1.000.000x).
+const clnCurAbbr = (v) => {
+  if (typeof v === "number") return v;
+  if (!v) return 0;
+  const s = String(v).replace(/rp/gi, "").replace(/\s/g, "").trim();
+  const m = s.match(/^([\d.,]+)\s*(RB|JT|K|M)?$/i);
+  if (!m) {
+    let n = parseFloat(s.replace(/\./g, "").replace(",", "."));
+    return isNaN(n) ? 0 : n;
+  }
+  // Format Indonesia: titik = pemisah ribuan (dibuang), koma = desimal (jadi titik)
+  let n = parseFloat(m[1].replace(/\./g, "").replace(",", "."));
+  if (isNaN(n)) return 0;
+  const suffix = (m[2] || "").toUpperCase();
+  if (suffix === "RB" || suffix === "K") n *= 1000;
+  else if (suffix === "JT" || suffix === "M") n *= 1000000;
+  return Math.round(n);
+};
+
 const clnCur = (v) => {
   if (typeof v === "number") return v;
   if (!v) return 0;
@@ -423,43 +447,117 @@ const clnCur = (v) => {
       .replace(",", "."),
   );
   return isNaN(n) ? 0 : n;
+}; // sudah tidak dipakai lagi (lihat clnCurAbbr di bawah), dibiarkan untuk referensi
+
+// Konversi angka singkatan seperti "1.00K" -> 1000, "3.24K" -> 3240,
+// "1.3JT" / "1.3M" -> 1300000. Dipakai untuk kolom non-currency yang
+// bisa muncul dalam format singkatan saat nilainya besar (Views,
+// Product Impression/Click, Like, dst). Angka biasa tanpa suffix
+// (contoh "361") tetap dikembalikan sebagai angka, tidak diubah.
+const parseAbbr = (v) => {
+  if (typeof v === "number") return v;
+  if (!v) return 0;
+  const s = String(v).trim().toUpperCase();
+  const m = s.match(/^([\d.,]+)\s*(K|JT|M)?$/);
+  if (!m) {
+    let n = parseFloat(s.replace(",", "."));
+    return isNaN(n) ? 0 : n;
+  }
+  let n = parseFloat(m[1].replace(",", "."));
+  if (isNaN(n)) return 0;
+  if (m[2] === "K") n *= 1000;
+  else if (m[2] === "JT" || m[2] === "M") n *= 1000000;
+  return Math.round(n);
+};
+
+// Mengubah string persentase "1.35%" menjadi angka desimal 0.0135.
+// Dipakai HANYA untuk kalkulasi internal (mis. Live Impression),
+// bukan untuk nilai yang ditulis ke kolom output (CTR/CO Rate/ERR
+// tetap disimpan sebagai string asli sesuai permintaan).
+const pctToDecimal = (v) => {
+  if (!v) return 0;
+  let n = parseFloat(String(v).replace("%", "").replace(",", "."));
+  return isNaN(n) ? 0 : n / 100;
+};
+
+// Pencarian kolom by EXACT key only (tanpa fallback partial-match).
+// Dipakai khusus untuk kolom yang punya "kembaran" nama mirip di raw
+// (contoh: "ctor" vs "ctor (sku orders)" -> setelah tanda kurung
+// dibuang, keduanya sama-sama jadi "ctor", sehingga getT/getV biasa
+// bisa salah tangkap tergantung urutan kemunculan kolom).
+const getExact = (r, key, fallback) => {
+  for (let k in r) {
+    let ck = k.replace(/\(.*?\)/g, "").trim();
+    if (ck === key && !k.includes("(")) return r[k] ?? fallback;
+  }
+  return fallback;
+};
+
+// Gabungkan Start Time + End Time jadi satu string range, contoh:
+// "2026-06-01 08:57:48" + "2026-06-01 10:59:08"
+// -> "2026-06-01 08:57:48 - 10:59:08"
+// Tanggal cukup ditulis sekali (dari Start Time), End Time hanya
+// menampilkan bagian jamnya saja.
+const formatDurationRange = (startStr, endStr) => {
+  if (!startStr || startStr === "-" || !endStr || endStr === "-") return "-";
+  const endTimePart = String(endStr).split(" ")[1] || endStr;
+  return `${startStr} - ${endTimePart}`;
+};
+
+// Konversi durasi raw dengan suffix "s", contoh "18.28s" -> 18, "18.61s" -> 19.
+// Pembulatan normal (Math.round), bukan selalu dibulatkan ke bawah.
+const roundSeconds = (v) => {
+  if (typeof v === "number") return Math.round(v);
+  if (!v) return 0;
+  let n = parseFloat(String(v).replace("s", "").replace(",", "."));
+  return isNaN(n) ? 0 : Math.round(n);
 };
 
 function processSyncData() {
   syncMappedData = syncRawData.map((row) => {
-    const pClick = getV(row, ["product click"]);
-    const views = getV(row, ["views"]);
-    const co = getV(row, ["attributed orders"]);
+    const views = parseAbbr(getV(row, ["views"]));
 
-    const ctr = views > 0 ? ((pClick / views) * 100).toFixed(2) + "%" : "0.00%";
-    const coRate =
-      pClick > 0 ? ((co / pClick) * 100).toFixed(2) + "%" : "0.00%";
+    // ERR (%) diambil dari kolom raw "Tap through rate".
+    // Disimpan sebagai string apa adanya (contoh: "1.35%") di kolom output,
+    // tapi juga dipakai dalam bentuk desimal untuk menghitung Live Impression.
+    const errRaw = getExact(row, "tap through rate", "-");
+    const errDecimal = pctToDecimal(errRaw);
+
+    // Live Impression = Views / ERR(desimal), dibulatkan ke bilangan bulat.
+    // Jika ERR 0 (data tidak lengkap), hasil dikosongkan untuk menghindari
+    // pembagian dengan nol / Infinity.
+    const liveImpression = errDecimal > 0 ? Math.round(views / errDecimal) : "";
+
+    // Ambil Start Time dan End Time dari raw, lalu gabungkan jadi satu
+    // string range untuk kolom "Duration (s)".
+    const startTimeRaw = getT(row, ["start time", "waktu mulai"]);
+    const endTimeRaw = getT(row, ["end time", "waktu selesai"]);
 
     return {
       Title: getT(row, ["livestream", "title", "judul"]),
-      "Duration (s)": getV(row, ["duration"]),
-      "Start Time": getT(row, ["start time", "waktu mulai"]),
-      "GMV Actual": clnCur(getV(row, ["attributed gmv"])),
-      "Product Impression": getV(row, ["product impressions"]),
-      "Product Click": pClick,
-      CTR: ctr,
+      "Duration (s)": formatDurationRange(startTimeRaw, endTimeRaw), // gabungan Start Time - End Time (jam saja)
+      "Start Time": startTimeRaw,
+      "GMV Actual": clnCurAbbr(getV(row, ["attributed gmv"])), // manual - handle suffix RB/JT
+      "Product Impression": parseAbbr(getV(row, ["product impressions"])), // k ganti o, titik (.) di ilangin
+      "Product Click": parseAbbr(getV(row, ["product click"])), // k ganti o, titik (.) di ilangin
+      CTR: getExact(row, "ctr", "-"), // kolom raw "CTR" (kolom W) - string apa adanya
       Order: getV(row, ["attributed items sold"]),
-      CO: co,
-      "CO Rate": coRate,
+      CO: getV(row, ["attributed orders"]),
+      "CO Rate": getExact(row, "ctor", "-"), // kolom raw "CTOR" (kolom X) - string apa adanya, BUKAN "CTOR (SKU orders)"
       Buyer: getV(row, ["customer"]),
-      AOV: clnCur(getV(row, ["aov"])),
-      Views: views,
-      Viewers: "",
+      AOV: clnCurAbbr(getV(row, ["aov"])), // manual - handle suffix RB/JT
+      Views: views, // k ganti o, titik (.) di ilangin
+      Viewers: "", // sengaja dikosongkan, diisi manual
       Comment: getV(row, ["comment"]),
-      Like: getV(row, ["like"]),
+      Like: parseAbbr(getV(row, ["like"])), // k ganti o, titik (.) di ilangin
       Follow: getV(row, ["new follower"]),
-      "Avg. View Duration (s)": getV(row, ["avg. viewing duration per viewer"]),
-      "Engagement Rate": "",
-      "Followers Rate": "",
-      "ERR (%)": "",
-      "Live Impression": getV(row, ["live impression"]),
-      "Ads Cost": clnCur(getV(row, ["ads cost"])),
-      "Ads GMV": clnCur(getV(row, ["ads gmv"])),
+      "Avg. View Duration (s)": roundSeconds(
+        getV(row, ["avg. viewing duration"]),
+      ), // dibulatkan ke bilangan bulat
+      "Engagement Rate": "", // sengaja dikosongkan, diisi manual
+      "Followers Rate": "", // sengaja dikosongkan, diisi manual
+      "ERR (%)": errRaw, // kolom raw "Tap through rate" (kolom S) - string apa adanya
+      "Live Impression": liveImpression, // rumus: Views / ERR(desimal)
     };
   });
 
