@@ -14,6 +14,10 @@ const views = {
     title: "SYSTEM MONITORING HOST",
     sub: " ",
   },
+  remote: {
+    title: "REMOTE CONTROL",
+    sub: " ",
+  },
 };
 
 const sidebar = document.getElementById("sidebar");
